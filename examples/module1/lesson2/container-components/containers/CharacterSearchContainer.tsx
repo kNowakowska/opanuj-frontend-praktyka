@@ -1,48 +1,45 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import CharacterList from '../components/CharacterList';
 import SearchForm from '../components/SearchForm';
 import SearchTitle from '../components/SearchTitle';
-import { Character } from '../types/Character';
+import sortCharacters from '../utils/sortCharacters';
+import useCharacters from '../hooks/useCharacters';
+import TextField from '../components/TextField';
+import Select from '../components/Select';
+import { genderOptions } from '../const/genderOptions';
+import { sortOptions } from '../const/sortOptions';
 
 function CharacterSearchContainer() {
-  const [name, setName] = useState('');
-  const [gender, setGender] = useState('');
-  const [characters, setCharacters] = useState<Character[]>([]);
+  const { name, setName, gender, setGender, characters } = useCharacters();
   const [sortOption, setSortOption] = useState('');
 
-  useEffect(() => {
-    if (name || gender) {
-      fetch(
-        `https://rickandmortyapi.com/api/character/?name=${name}&gender=${gender}`
-      )
-        .then((response) => response.json())
-        .then((data) => setCharacters(data.results || []))
-        .catch((error) => console.error('Error fetching data:', error));
-    }
-  }, [name, gender]);
-
-  const sortedCharacters = [...characters].sort((a, b) => {
-    if (sortOption === 'name') {
-      return a.name.localeCompare(b.name);
-    } else if (sortOption === 'created') {
-      return new Date(a.created).getTime() - new Date(b.created).getTime();
-    }
-    return 0;
-  });
+  const sortedCharacters = sortCharacters(characters, sortOption);
 
   return (
     <>
       <div className="pt-20" />
-      <SearchTitle />
+      <SearchTitle title={'Wyszukiwarka postaci Pokemon'} />
       <div className="pt-8" />
-      <SearchForm
-        name={name}
-        setName={setName}
-        gender={gender}
-        setGender={setGender}
-        sortOption={sortOption}
-        setSortOption={setSortOption}
-      />
+      <SearchForm>
+        <TextField
+          label="Name"
+          placeholder="Rick Sanchez..."
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <Select
+          label="Gender"
+          value={gender}
+          onChange={(e) => setGender(e.target.value)}
+          options={genderOptions}
+        />
+        <Select
+          label="Sort by"
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+          options={sortOptions}
+        />
+      </SearchForm>
       <div className="pt-12" />
       <CharacterList characters={sortedCharacters} />
       <div className="pt-16" />
