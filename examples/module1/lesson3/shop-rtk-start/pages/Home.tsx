@@ -1,10 +1,10 @@
-import { useContext } from 'react';
 import Product from '../components/Product';
-import { ProductContext } from '../contexts/ProductContext';
+import { useGetProductsQuery } from '../services/productsService';
 
 const Home = () => {
-  const { products } = useContext(ProductContext);
-
+  const { data: products = [], isFetching, isError } = useGetProductsQuery();
+  if (isFetching) return <div>Loading...</div>;
+  if (isError) return <div>Error</div>;
   return (
     <div>
       <section className="py-20">

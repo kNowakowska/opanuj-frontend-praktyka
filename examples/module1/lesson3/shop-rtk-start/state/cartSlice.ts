@@ -15,13 +15,16 @@ export const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    addToCart: (state, action: PayloadAction<Product | CartItem>) => {
-      const cartItem = state.items.find((item) => {
+    addToCart: (
+      state: CartState,
+      action: PayloadAction<Product | CartItem>
+    ) => {
+      const cartItem = state.items.find((item: CartItem) => {
         return item.id === action.payload.id;
       });
 
       if (cartItem) {
-        state.items = state.items.map((item) =>
+        state.items = state.items.map((item: CartItem) =>
           item.id === action.payload.id
             ? { ...item, amount: cartItem.amount + 1 }
             : item
@@ -31,18 +34,49 @@ export const cartSlice = createSlice({
         state.items.push(newItem);
       }
     },
-    clearCart: (state) => {
+    clearCart: (state: CartState) => {
       state.items = [];
+    },
+    removeFromCart: (state: CartState, action: PayloadAction<number>) => {
+      state.items = state.items.filter((item: CartItem) => {
+        return item.id !== action.payload;
+      });
+    },
+    decreaseAmount: (state: CartState, action: PayloadAction<number>) => {
+      const cartItem = state.items.find((item: CartItem) => {
+        return item.id === action.payload;
+      });
+
+      if (!cartItem) {
+        return;
+      }
+
+      if (cartItem.amount <= 1) {
+        state.items = state.items.filter((item: CartItem) => {
+          return item.id !== action.payload;
+        });
+        return;
+      }
+
+      state.items = state.items.map((item: CartItem) =>
+        item.id === action.payload
+          ? { ...item, amount: cartItem.amount - 1 }
+          : item
+      );
     },
   },
 });
 
-export const { addToCart, clearCart } = cartSlice.actions;
+export const { addToCart, clearCart, removeFromCart, decreaseAmount } =
+  cartSlice.actions;
 
 export const selectCartItems = (state: RootState) => state.cart.items;
 export const selectItemAmount = (state: RootState) =>
-  state.cart.items.reduce((accumulator, currentItem) => {
+  state.cart.items.reduce((accumulator: number, currentItem: CartItem) => {
     return accumulator + currentItem.amount;
   }, 0);
-
+export const selectTotal = (state: RootState) =>
+  state.cart.items.reduce((accumulator: number, currentItem: CartItem) => {
+    return accumulator + currentItem.price * currentItem.amount;
+  }, 0);
 export default cartSlice.reducer;
