@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useEffect, useState } from 'react';
 import { CartItem } from '../types/CartItem';
 import { Product } from '../types/Product';
 
@@ -35,50 +35,61 @@ const CartProvider = ({ children }: { children: React.ReactNode }) => {
     setItemAmount(amount);
   }, [cart]);
 
-  const addToCart = (product: Product | CartItem) => {
-    const cartItem = cart.find((item) => {
-      return item.id === product.id;
-    });
+  const addToCart = useCallback(
+    (product: Product | CartItem) => {
+      const cartItem = cart.find((item) => {
+        return item.id === product.id;
+      });
 
-    if (cartItem) {
+      if (cartItem) {
+        const newCart = cart.map((item) =>
+          item.id === product.id
+            ? { ...item, amount: cartItem.amount + 1 }
+            : item
+        );
+        setCart(newCart);
+      } else {
+        const newItem = { ...product, amount: 1 };
+        setCart([...cart, newItem]);
+      }
+    },
+    [cart]
+  );
+
+  const removeFromCart = useCallback(
+    (id: number) => {
+      const newCart = cart.filter((item) => {
+        return item.id !== id;
+      });
+      setCart(newCart);
+    },
+    [cart]
+  );
+
+  const decreaseAmount = useCallback(
+    (id: number) => {
+      const cartItem = cart.find((item) => item.id === id);
+
+      if (!cartItem) {
+        return;
+      }
+
+      if (cartItem.amount <= 1) {
+        removeFromCart(id);
+        return;
+      }
+
       const newCart = cart.map((item) =>
-        item.id === product.id ? { ...item, amount: cartItem.amount + 1 } : item
+        item.id === id ? { ...item, amount: cartItem.amount - 1 } : item
       );
       setCart(newCart);
-    } else {
-      const newItem = { ...product, amount: 1 };
-      setCart([...cart, newItem]);
-    }
-  };
+    },
+    [cart, removeFromCart]
+  );
 
-  const decreaseAmount = (id: number) => {
-    const cartItem = cart.find((item) => item.id === id);
-
-    if (!cartItem) {
-      return;
-    }
-
-    if (cartItem.amount <= 1) {
-      removeFromCart(id);
-      return;
-    }
-
-    const newCart = cart.map((item) =>
-      item.id === id ? { ...item, amount: cartItem.amount - 1 } : item
-    );
-    setCart(newCart);
-  };
-
-  const removeFromCart = (id: number) => {
-    const newCart = cart.filter((item) => {
-      return item.id !== id;
-    });
-    setCart(newCart);
-  };
-
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setCart([]);
-  };
+  }, []);
 
   return (
     <CartContext.Provider
