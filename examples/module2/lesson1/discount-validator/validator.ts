@@ -5,14 +5,17 @@ export function formValidator(
 ) {
   const errors: string[] = [];
 
-  if (!firstName) {
+  if (!firstName || firstName.length < 2) {
     errors.push('First name is required');
   }
 
-  if (!lastName) {
+  if (!lastName || lastName.length < 2) {
     errors.push('Last name is required');
   }
 
+  if (typeof age !== 'number') {
+    errors.push('Age must be a number.');
+  }
   if (age < 0) {
     errors.push('Age must be a positive number');
   }
