@@ -15,14 +15,23 @@ describe('User renderer', () => {
 
     const container = document.createElement('div');
     renderItems(container, users);
-    expect(Array.from(container.querySelectorAll('li'))).toHaveLength(3);
+    const listItems = Array.from(container.querySelectorAll('li'));
+    expect(listItems).toHaveLength(3);
+    listItems.forEach((item, idx) =>
+      expect(item.textContent).toContain(users[idx].name)
+    );
   });
 
   test('should render only regular users if non-admin is rendering the list', () => {
     localStorage.setItem('userRole', 'user');
+    const filteredUsers = users.filter((user) => user.role !== 'admin');
 
     const container = document.createElement('div');
     renderItems(container, users);
+    const listItems = Array.from(container.querySelectorAll('li'));
     expect(Array.from(container.querySelectorAll('li'))).toHaveLength(2);
+    listItems.forEach((item, idx) =>
+      expect(item.textContent).toContain(filteredUsers[idx].name)
+    );
   });
 });
