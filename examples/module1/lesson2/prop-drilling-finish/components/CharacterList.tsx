@@ -12,3 +12,5 @@ export function CharacterList({ characters }: { characters: Character[] }) {
     </ol>
   );
 }
+
+export default CharacterList;
