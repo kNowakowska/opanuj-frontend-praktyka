@@ -4,7 +4,7 @@ import path from 'path';
 dotenv.config();
 
 const BASE_URL = 'https://en.wikipedia.org';
-const PROJECT_DIR = './module2/lesson3/base';
+const PROJECT_DIR = './module2/lesson3/extended';
 const SETUP_PATH_REGEX = '**/*.setup.ts';
 const LOGGED_IN_PATH_REGEX = '**/logged-in/*.spec.ts';
 
@@ -20,7 +20,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : isRunningExtended ? 2 : undefined,
+  workers: process.env.CI ? 1 : isRunningExtended ? 1 : undefined,
   reporter: [
     ['html', { outputFolder: `${PROJECT_DIR}/playwright/html-report` }],
   ],
