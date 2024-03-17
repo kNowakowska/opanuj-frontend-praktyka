@@ -8,6 +8,7 @@ export class MainPage {
   private readonly featuredArticleExcerpt: Locator;
   private readonly searchInput: Locator;
   private readonly sideMenu: Locator;
+  private readonly searchList: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -22,6 +23,9 @@ export class MainPage {
       .getByRole('searchbox', { name: /Search Wikipedia/i });
 
     this.sideMenu = page.getByRole('navigation', { name: 'Site' });
+    this.searchList = this.page.getByRole('listbox', {
+      name: /Search results/i,
+    });
   }
 
   navigate() {
@@ -53,6 +57,10 @@ export class MainPage {
 
   async searchFor(term: string) {
     return this.searchInput.fill(term);
+  }
+
+  selectFirstSearchResult() {
+    return this.searchList.getByRole('option').first().click();
   }
 
   getSearchResults() {
