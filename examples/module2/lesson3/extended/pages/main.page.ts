@@ -7,6 +7,7 @@ export class MainPage {
   readonly navigation: Locator;
   private readonly featuredArticleExcerpt: Locator;
   private readonly searchInput: Locator;
+  private readonly sideMenu: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -19,6 +20,8 @@ export class MainPage {
     this.searchInput = page
       .getByRole('search')
       .getByRole('searchbox', { name: /Search Wikipedia/i });
+
+    this.sideMenu = page.getByRole('navigation', { name: 'Site' });
   }
 
   navigate() {
@@ -27,6 +30,12 @@ export class MainPage {
 
   goToLoginPage() {
     return this.navigation.getByRole('link', { name: 'Log in' }).click();
+  }
+
+  goToCommunityPortal() {
+    return this.sideMenu
+      .getByRole('link', { name: 'Community portal' })
+      .click();
   }
 
   async goToFeaturedArticle() {
