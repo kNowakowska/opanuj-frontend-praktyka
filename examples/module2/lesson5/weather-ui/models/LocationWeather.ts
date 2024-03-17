@@ -14,5 +14,11 @@ export interface DailyWeather {
 export interface LocationWeather {
   city: string;
   country: string;
-  weatherDetails: DailyWeather[];
+  weatherDetails: DailyWeather[] | DailyWeatherInUS;
+}
+
+export interface DailyWeatherInUS {
+  Weather: (Omit<DailyWeather, 'averageTemperature'> & {
+    average_temperature: number;
+  })[];
 }

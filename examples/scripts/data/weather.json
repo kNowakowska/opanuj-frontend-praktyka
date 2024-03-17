@@ -42,17 +42,17 @@
       "Weather": [
         {
           "date": "04-10-2024",
-          "type": "rainy",
-          "average_temperature": 8
+          "type": "sunny",
+          "average_temperature": 20
         },
         {
           "date": "04-11-2024",
-          "type": "rainy",
-          "average_temperature": 7
+          "type": "sunny",
+          "average_temperature": 22
         },
         {
           "date": "04-12-2024",
-          "type": "sunny",
+          "type": "rainy",
           "average_temperature": 10
         }
       ]

@@ -1,9 +1,11 @@
 <script lang="ts">
   import { fetchWeather } from '../lib/LocationFetcher';
   import { LocationWeather } from '../models/LocationWeather';
+  import WeatherError from './WeatherError.svelte';
   import WeatherPreview from './WeatherPreview.svelte';
 
-  let weather: LocationWeather;
+  let weather: LocationWeather | undefined;
+  let error: string;
 
   async function onLocationChange(event: KeyboardEvent) {
     const locationQuery = (event.target as HTMLInputElement).value;
@@ -11,8 +13,11 @@
       const result = await fetchWeather(locationQuery);
       if (result) {
         weather = result;
+        error = '';
       }
     } catch {
+      weather = undefined;
+      error = `Failed to fetch weather for ${locationQuery}`;
       console.error(`Failed to fetch weather for ${locationQuery}`);
     }
   }
@@ -37,6 +42,11 @@
       placeholder="Location"
       on:keyup={onLocationChange}
     />
+  </div>
+  <div>
+    {#if error}
+      <WeatherError {error} />
+    {/if}
   </div>
   <div>
     {#if weather}
